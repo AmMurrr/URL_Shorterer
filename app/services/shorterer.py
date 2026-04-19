@@ -1,5 +1,5 @@
 from schemas.scheme import URLCreate
-from database import add_url, db, get_url
+from database import add_url, get_url
 
 characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
