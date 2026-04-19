@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from schemas.scheme import URLCreate
 from database import add_url, get_url
 
@@ -24,13 +26,25 @@ def shorten_url(data: URLCreate) -> str:
 
 # get long url from db and return it
 def get_long_url(data: str) -> str:
+    if not data:
+        raise HTTPException(status_code=400, detail="Short code is empty")
+
     code = 0
     offset = 1
     for i in data[::-1]:
-        code = code + characters.index(i) * offset
+        try:
+            digit = characters.index(i)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="Invalid short code") from exc
+
+        code = code + digit * offset
         offset *= len(characters)
 
-    long_url = get_url(code)
+    try:
+        long_url = get_url(code)
+    except (KeyError, IndexError) as exc:
+        raise HTTPException(status_code=404, detail="Short URL not found") from exc
+
     return long_url
 
     

@@ -33,7 +33,15 @@ def add_url(long_url: str) -> int:
 
 
 def get_url(url_id: int) -> str:
+    if url_id < 0:
+        raise KeyError("URL not found")
+
     document = urls_collection.find_one({"_id": url_id}, {"long_url": 1})
     if document is None:
         raise KeyError("URL not found")
-    return str(document["long_url"])
+
+    long_url = document.get("long_url")
+    if long_url is None:
+        raise KeyError("URL not found")
+
+    return str(long_url)
